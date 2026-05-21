@@ -31,7 +31,6 @@
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
-    "newArchEnabled": true,
     "plugins": [
       "expo-dev-client",
       "expo-router",
