@@ -1,6 +1,7 @@
 {
   "expo": {
     "name": "L'Artisan",
+    "owner": "lartisanbakery-at",
     "slug": "lartisan-bakery",
     "version": "1.0.0",
     "scheme": "lartisan",
