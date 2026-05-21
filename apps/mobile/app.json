@@ -1,0 +1,44 @@
+{
+  "expo": {
+    "name": "L'Artisan",
+    "slug": "lartisan-bakery",
+    "version": "1.0.0",
+    "scheme": "lartisan",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FCFBF7"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.lartisan.bakery"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#FCFBF7"
+      },
+      "package": "com.lartisan.bakery"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "newArchEnabled": true,
+    "plugins": [
+      "expo-dev-client",
+      "expo-router",
+      "expo-font",
+      "expo-secure-store"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

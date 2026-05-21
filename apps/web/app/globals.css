@@ -1,0 +1,37 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+:root {
+  --font-sans: 'Inter', sans-serif;
+  --font-serif: 'Playfair Display', serif;
+}
+
+body {
+  background-color: #FCFBF7; /* bakery-cream */
+  color: #1C160E; /* bakery-charcoal */
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-serif);
+  font-weight: 700;
+}
+
+/* Custom Parallax & Scroll effects */
+.parallax-container {
+  overflow: hidden;
+  position: relative;
+}
+
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1.5rem;
+}
+
+/* Smooth Scrolling */
+html {
+  scroll-behavior: smooth;
+}
