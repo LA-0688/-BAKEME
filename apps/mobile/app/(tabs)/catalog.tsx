@@ -11,6 +11,7 @@ import {
   Pressable,
   Dimensions,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
 import Animated, {
   FadeInDown,
@@ -21,6 +22,8 @@ import Animated, {
 import * as Haptics from 'expo-haptics';
 import { supabase } from '../../lib/supabase';
 import { useCartStore, CartProduct } from '../../store/cartStore';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Feather } from '@expo/vector-icons';
 
 const { width: SCREEN_W } = Dimensions.get('window');
 
@@ -45,7 +48,7 @@ function ProductCard({
   }));
 
   const handlePressIn = () => {
-    scale.value = withSpring(0.97, { damping: 20, stiffness: 300 });
+    scale.value = withSpring(0.96, { damping: 20, stiffness: 300 });
   };
 
   const handlePressOut = () => {
@@ -74,6 +77,10 @@ function ProductCard({
             style={styles.productImage}
             resizeMode="cover"
           />
+          <LinearGradient
+            colors={['transparent', 'rgba(0,0,0,0.6)']}
+            style={styles.imageGradient}
+          />
           <View style={styles.categoryBadge}>
             <Text style={styles.categoryText}>{product.category}</Text>
           </View>
@@ -97,7 +104,8 @@ function ProductCard({
               style={styles.addButton}
               activeOpacity={0.8}
             >
-              <Text style={styles.addButtonText}>+ Add</Text>
+              <Feather name="plus" size={14} color="#FFF" />
+              <Text style={styles.addButtonText}>Add</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -203,9 +211,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 16,
     paddingBottom: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F5ECE140',
-    backgroundColor: '#FCFBF7',
+    backgroundColor: 'transparent',
   },
   headerEyebrow: {
     fontFamily: 'Inter-SemiBold',
@@ -217,43 +223,56 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontFamily: 'PlayfairDisplay-Bold',
-    fontSize: 30,
+    fontSize: 34,
     color: '#1C160E',  // bakery-charcoal
   },
   listContent: {
     paddingHorizontal: 16,
-    paddingTop: 16,
+    paddingTop: 8,
     paddingBottom: 100,
   },
   columnWrapper: {
-    gap: 12,
-    marginBottom: 12,
+    gap: 16,
+    marginBottom: 16,
   },
   cardContainer: {
     flex: 1,
-    maxWidth: (SCREEN_W - 44) / 2,
+    maxWidth: (SCREEN_W - 48) / 2,
   },
   card: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 20,
+    borderRadius: 24,
     overflow: 'hidden',
+    shadowColor: '#1C160E',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.06,
+    shadowRadius: 16,
+    elevation: 4,
     borderWidth: 1,
-    borderColor: '#F5ECE1',
+    borderColor: 'rgba(245, 236, 225, 0.5)',
   },
   imageContainer: {
     position: 'relative',
+    height: 150,
   },
   productImage: {
     width: '100%',
-    height: 140,
+    height: '100%',
+  },
+  imageGradient: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: '60%',
   },
   categoryBadge: {
     position: 'absolute',
-    bottom: 8,
-    left: 8,
-    backgroundColor: '#1C160ECC',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
+    bottom: 10,
+    left: 10,
+    backgroundColor: 'rgba(252, 251, 247, 0.9)',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
     borderRadius: 20,
   },
   categoryText: {
@@ -261,30 +280,30 @@ const styles = StyleSheet.create({
     fontSize: 9,
     letterSpacing: 1,
     textTransform: 'uppercase',
-    color: '#F5ECE1',
+    color: '#8F5310',
   },
   cardContent: {
-    padding: 12,
+    padding: 14,
     gap: 4,
   },
   productName: {
     fontFamily: 'PlayfairDisplay-Bold',
-    fontSize: 14,
+    fontSize: 15,
     color: '#1C160E',
-    lineHeight: 18,
+    lineHeight: 20,
   },
   productDescription: {
     fontFamily: 'Inter-Regular',
     fontSize: 11,
-    color: '#1C160E99',
-    lineHeight: 15,
+    color: '#1C160E80',
+    lineHeight: 16,
     marginTop: 2,
   },
   cardFooter: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: 10,
+    marginTop: 12,
   },
   productPrice: {
     fontFamily: 'PlayfairDisplay-Bold',
@@ -293,9 +312,12 @@ const styles = StyleSheet.create({
   },
   addButton: {
     backgroundColor: '#D98324',
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 12,
-    paddingVertical: 6,
+    paddingVertical: 8,
     borderRadius: 20,
+    gap: 4,
   },
   addButtonText: {
     fontFamily: 'Inter-SemiBold',

@@ -15,6 +15,9 @@ import Animated, {
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useCartStore } from '../../store/cartStore';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Feather } from '@expo/vector-icons';
+import { router } from 'expo-router';
 
 export default function CartScreen() {
   const { items, removeItem } = useCartStore();
@@ -33,7 +36,7 @@ export default function CartScreen() {
           <Text style={styles.headerTitle}>Your Basket</Text>
         </View>
         <View style={styles.emptyState}>
-          <Text style={styles.emptyEmoji}>🛍️</Text>
+          <Feather name="shopping-bag" size={48} color="#1C160E40" />
           <Text style={styles.emptyTitle}>Your basket is empty</Text>
           <Text style={styles.emptySubtitle}>
             Add items from the Catalog tab.{'\n'}Items will sync instantly to the web app.
@@ -110,8 +113,16 @@ export default function CartScreen() {
         <Text style={styles.footerNote}>
           Taxes calculated at checkout · Synced across your devices
         </Text>
-        <TouchableOpacity style={styles.checkoutBtn} activeOpacity={0.85}>
-          <Text style={styles.checkoutBtnText}>Proceed to Checkout →</Text>
+        <TouchableOpacity activeOpacity={0.85} onPress={() => router.push('/checkout')}>
+          <LinearGradient
+            colors={['#D98324', '#8F5310']}
+            style={styles.checkoutBtn}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+          >
+            <Text style={styles.checkoutBtnText}>Proceed to Checkout</Text>
+            <Feather name="arrow-right" size={16} color="#FFF" />
+          </LinearGradient>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -145,7 +156,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontFamily: 'PlayfairDisplay-Bold',
-    fontSize: 30,
+    fontSize: 34,
     color: '#1C160E',
   },
   syncBadge: {
@@ -180,12 +191,17 @@ const styles = StyleSheet.create({
   cartRow: {
     flexDirection: 'row',
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
+    borderRadius: 20,
     padding: 14,
-    borderWidth: 1,
-    borderColor: '#F5ECE1',
     alignItems: 'center',
     gap: 12,
+    shadowColor: '#1C160E',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.05,
+    shadowRadius: 12,
+    elevation: 3,
+    borderWidth: 1,
+    borderColor: 'rgba(245, 236, 225, 0.6)',
   },
   itemImage: {
     width: 64,
@@ -269,15 +285,22 @@ const styles = StyleSheet.create({
     lineHeight: 14,
   },
   checkoutBtn: {
-    backgroundColor: '#D98324',
+    flexDirection: 'row',
     paddingVertical: 16,
     borderRadius: 40,
     alignItems: 'center',
+    justifyContent: 'center',
     marginTop: 4,
+    gap: 8,
+    shadowColor: '#D98324',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
+    elevation: 6,
   },
   checkoutBtnText: {
     fontFamily: 'Inter-SemiBold',
-    fontSize: 13,
+    fontSize: 14,
     letterSpacing: 1,
     textTransform: 'uppercase',
     color: '#FFFFFF',

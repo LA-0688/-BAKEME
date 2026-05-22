@@ -14,6 +14,8 @@ import {
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { supabase } from '../../lib/supabase';
 import type { Session } from '@supabase/supabase-js';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Feather } from '@expo/vector-icons';
 
 // ---------------------------------------------------------------
 // Step 1: User enters their phone or email.
@@ -193,16 +195,26 @@ export default function ProfileScreen() {
             />
 
             <TouchableOpacity
-              style={[styles.ctaBtn, loading && styles.ctaBtnDisabled]}
               onPress={sendOtp}
               disabled={loading}
               activeOpacity={0.85}
+              style={{ marginTop: 8 }}
             >
-              {loading ? (
-                <ActivityIndicator color="#FFF" />
-              ) : (
-                <Text style={styles.ctaBtnText}>Send Code →</Text>
-              )}
+              <LinearGradient
+                colors={loading ? ['#D9832480', '#8F531080'] : ['#D98324', '#8F5310']}
+                style={styles.ctaBtn}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+              >
+                {loading ? (
+                  <ActivityIndicator color="#FFF" />
+                ) : (
+                  <>
+                    <Text style={styles.ctaBtnText}>Send Code</Text>
+                    <Feather name="arrow-right" size={16} color="#FFF" />
+                  </>
+                )}
+              </LinearGradient>
             </TouchableOpacity>
           </Animated.View>
         </KeyboardAvoidingView>
@@ -243,16 +255,26 @@ export default function ProfileScreen() {
           />
 
           <TouchableOpacity
-            style={[styles.ctaBtn, loading && styles.ctaBtnDisabled]}
             onPress={verifyOtp}
             disabled={loading}
             activeOpacity={0.85}
+            style={{ marginTop: 8 }}
           >
-            {loading ? (
-              <ActivityIndicator color="#FFF" />
-            ) : (
-              <Text style={styles.ctaBtnText}>Verify & Sign In →</Text>
-            )}
+            <LinearGradient
+              colors={loading ? ['#D9832480', '#8F531080'] : ['#D98324', '#8F5310']}
+              style={styles.ctaBtn}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+            >
+              {loading ? (
+                <ActivityIndicator color="#FFF" />
+              ) : (
+                <>
+                  <Text style={styles.ctaBtnText}>Verify & Sign In</Text>
+                  <Feather name="arrow-right" size={16} color="#FFF" />
+                </>
+              )}
+            </LinearGradient>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -320,25 +342,34 @@ const styles = StyleSheet.create({
     fontFamily: 'PlayfairDisplay-Bold',
   },
   ctaBtn: {
-    backgroundColor: '#D98324',
+    flexDirection: 'row',
     paddingVertical: 16,
     borderRadius: 40,
     alignItems: 'center',
-    marginTop: 8,
+    justifyContent: 'center',
+    gap: 8,
+    shadowColor: '#D98324',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
+    elevation: 6,
   },
   ctaBtnDisabled: {
     opacity: 0.6,
   },
   ctaBtnText: {
     fontFamily: 'Inter-SemiBold',
-    fontSize: 13,
+    fontSize: 14,
     letterSpacing: 1,
     textTransform: 'uppercase',
     color: '#FFFFFF',
   },
   backLink: {
+    flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 20,
+    justifyContent: 'center',
+    marginTop: 24,
+    gap: 6,
   },
   backLinkText: {
     fontFamily: 'Inter-Medium',
@@ -351,10 +382,15 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     padding: 24,
     borderWidth: 1,
-    borderColor: '#F5ECE1',
+    borderColor: 'rgba(245, 236, 225, 0.5)',
     alignItems: 'center',
     gap: 10,
     marginTop: 8,
+    shadowColor: '#1C160E',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.06,
+    shadowRadius: 16,
+    elevation: 4,
   },
   avatar: {
     width: 72,

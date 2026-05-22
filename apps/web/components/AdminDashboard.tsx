@@ -6,9 +6,10 @@ import {
   TrendingUp, ShoppingBag, Clock, ArrowLeft, RefreshCw, 
   MapPin, Phone, Calendar, CheckCircle2, Flame, Award, 
   Utensils, Coffee, Ban, PackageCheck, PlayCircle,
-  Plus, X, Trash2, Eye, EyeOff, Edit, Package, ChevronRight
+  Plus, X, Trash2, Eye, EyeOff, Edit, Package, ChevronRight, Activity
 } from 'lucide-react';
 import { supabase, type Product } from '../lib/supabase';
+import AgentLogsWorkspace from './AgentLogsWorkspace';
 
 interface AdminDashboardProps {
   onBack: () => void;
@@ -46,7 +47,7 @@ export default function AdminDashboard({ onBack }: AdminDashboardProps) {
   const [syncStatus, setSyncStatus] = useState<'idle' | 'syncing' | 'synced'>('synced');
   
   // Inventory Tab states
-  const [currentTab, setCurrentTab] = useState<'orders' | 'inventory'>('orders');
+  const [currentTab, setCurrentTab] = useState<'orders' | 'inventory' | 'agents'>('orders');
   const [products, setProducts] = useState<Product[]>([]);
   const [productsLoading, setProductsLoading] = useState(true);
   const [isAddDrawerOpen, setIsAddDrawerOpen] = useState(false);
@@ -594,9 +595,29 @@ export default function AdminDashboard({ onBack }: AdminDashboardProps) {
               />
             )}
           </button>
+
+          <button
+            onClick={() => setCurrentTab('agents')}
+            className={`font-serif text-xl tracking-wider pb-3 transition-all relative ${
+              currentTab === 'agents'
+                ? 'text-bakery-amber font-semibold font-bold flex items-center gap-2'
+                : 'text-bakery-charcoal/50 hover:text-bakery-charcoal/80 flex items-center gap-2'
+            }`}
+          >
+            <Activity className="h-5 w-5" />
+            AI Orchestrator
+            {currentTab === 'agents' && (
+              <motion.div
+                layoutId="activeTabUnderline"
+                className="absolute bottom-0 inset-x-0 h-0.5 bg-bakery-amber"
+              />
+            )}
+          </button>
         </div>
 
-        {currentTab === 'orders' ? (
+        {currentTab === 'agents' ? (
+          <AgentLogsWorkspace />
+        ) : currentTab === 'orders' ? (
           <>
             {/* METRICS ROW */}
             <section className="grid grid-cols-1 md:grid-cols-3 gap-6">

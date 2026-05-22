@@ -1,20 +1,20 @@
 import { Tabs } from 'expo-router';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Platform } from 'react-native';
 import { useCartStore } from '../../store/cartStore';
+import { BlurView } from 'expo-blur';
+import { Feather } from '@expo/vector-icons';
 
-// Premium icon components (inline SVG-style using React Native Views)
-// avoids an extra icon library dependency
 const CatalogIcon = ({ focused }: { focused: boolean }) => (
-  <View style={[styles.iconWrap, focused && styles.iconWrapActive]}>
-    <Text style={[styles.emoji, focused && styles.emojiActive]}>🥐</Text>
+  <View style={styles.iconWrap}>
+    <Feather name="coffee" size={22} color={focused ? '#D98324' : '#1C160E80'} />
   </View>
 );
 
 const CartIcon = ({ focused }: { focused: boolean }) => {
   const count = useCartStore((s) => s.items.reduce((n, i) => n + i.quantity, 0));
   return (
-    <View style={[styles.iconWrap, focused && styles.iconWrapActive]}>
-      <Text style={[styles.emoji, focused && styles.emojiActive]}>🛍️</Text>
+    <View style={styles.iconWrap}>
+      <Feather name="shopping-bag" size={22} color={focused ? '#D98324' : '#1C160E80'} />
       {count > 0 && (
         <View style={styles.badge}>
           <Text style={styles.badgeText}>{count > 9 ? '9+' : count}</Text>
@@ -25,8 +25,8 @@ const CartIcon = ({ focused }: { focused: boolean }) => {
 };
 
 const ProfileIcon = ({ focused }: { focused: boolean }) => (
-  <View style={[styles.iconWrap, focused && styles.iconWrapActive]}>
-    <Text style={[styles.emoji, focused && styles.emojiActive]}>👤</Text>
+  <View style={styles.iconWrap}>
+    <Feather name="user" size={22} color={focused ? '#D98324' : '#1C160E80'} />
   </View>
 );
 
@@ -36,8 +36,11 @@ export default function TabLayout() {
       screenOptions={{
         headerShown: false,
         tabBarStyle: styles.tabBar,
-        tabBarActiveTintColor: '#D98324',       // bakery-crust golden orange
-        tabBarInactiveTintColor: '#1C160E99',   // bakery-charcoal at 60% opacity
+        tabBarBackground: () => (
+          <BlurView intensity={80} tint="light" style={StyleSheet.absoluteFill} />
+        ),
+        tabBarActiveTintColor: '#D98324',
+        tabBarInactiveTintColor: '#1C160E80',
         tabBarLabelStyle: styles.tabLabel,
       }}
     >
@@ -68,48 +71,38 @@ export default function TabLayout() {
 
 const styles = StyleSheet.create({
   tabBar: {
-    backgroundColor: '#FCFBF7',    // bakery-cream
-    borderTopColor: '#F5ECE140',   // bakery-wheat at 25% opacity
-    borderTopWidth: 1,
-    paddingTop: 6,
-    paddingBottom: 8,
-    height: 68,
+    position: 'absolute',
+    borderTopWidth: 0,
     elevation: 0,
-    shadowOpacity: 0,
+    backgroundColor: 'transparent',
+    height: Platform.OS === 'ios' ? 88 : 70,
+    paddingBottom: Platform.OS === 'ios' ? 28 : 10,
+    paddingTop: 10,
   },
   tabLabel: {
     fontFamily: 'Inter-SemiBold',
     fontSize: 10,
     letterSpacing: 0.5,
     textTransform: 'uppercase',
-    marginTop: 2,
+    marginTop: 4,
   },
   iconWrap: {
     alignItems: 'center',
     justifyContent: 'center',
-    position: 'relative',
-    width: 36,
-    height: 28,
-  },
-  iconWrapActive: {},
-  emoji: {
-    fontSize: 20,
-    opacity: 0.5,
-  },
-  emojiActive: {
-    opacity: 1,
+    width: 40,
+    height: 30,
   },
   badge: {
     position: 'absolute',
-    top: -4,
-    right: -6,
+    top: -6,
+    right: -2,
     backgroundColor: '#D98324',
-    borderRadius: 8,
-    minWidth: 16,
-    height: 16,
+    borderRadius: 10,
+    minWidth: 18,
+    height: 18,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 3,
+    paddingHorizontal: 4,
     borderWidth: 1.5,
     borderColor: '#FCFBF7',
   },

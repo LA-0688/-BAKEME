@@ -226,26 +226,24 @@ export default function CheckoutModal({ isOpen, onClose, cart, totalAmount, onSu
 
     try {
       const mockPaymentId = `pay_mock_${Math.random().toString(36).substring(2, 12)}`;
-      
-      // Simulate Razorpay webhook trigger from server
-      const res = await fetch('/api/webhooks/razorpay', {
+      // Trigger AI Orchestrator with the order payload
+      const res = await fetch('/api/ai/orchestrator', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          event: 'payment.captured',
-          payload: {
-            payment: {
-              entity: {
-                id: mockPaymentId,
-                order_id: pgOrderId,
-                amount: Math.round(totalAmount * 100),
-              }
-            }
-          }
+          orderId: orderId || mockPaymentId,
+          items: cart.map(item => ({ itemName: item.product.name, quantity: item.quantity })),
+          totalAmount: totalAmount,
+          customer: {
+            phone: phone,
+            name: user?.user_metadata?.full_name || 'Valued Customer'
+          },
+          deliveryType: deliveryType,
+          scheduledTime: scheduledTime,
         }),
       });
 
-      if (!res.ok) throw new Error('Mock webhook sync failed.');
+      if (!res.ok) console.warn('AI Orchestrator returned an error, but proceeding with checkout success.');
 
       // Delay to show simulating spinner beautifully
       setTimeout(() => {

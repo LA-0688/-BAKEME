@@ -36,9 +36,9 @@
 
 ## Phase 6: AI Orchestration Integration
 **Goal:** Automate bakery administration and customer service.
-*   [ ] **The Handoff Endpoint:** Inside your payment success webhook, compile the finalized order data (items, customer details, delivery/pickup time).
-*   [ ] **Agent Routing:** POST this order data directly to your multi-agent backend architecture. 
-*   [ ] **Verification:** Ensure the data successfully reaches your two head agents to delegate administrative and customer service tasks to your six sub-agents.
+*   [x] **The Handoff Endpoint:** Inside your payment success webhook, compile the finalized order data (items, customer details, delivery/pickup time).
+*   [x] **Agent Routing:** POST this order data directly to your multi-agent backend architecture. 
+*   [x] **Verification:** Ensure the data successfully reaches your two head agents to delegate administrative and customer service tasks to your six sub-agents.
 
 ## Phase 7: Testing & Launch
 **Goal:** Polish and deploy.

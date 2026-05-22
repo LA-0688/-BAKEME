@@ -7,7 +7,6 @@
     "development": {
       "developmentClient": true,
       "distribution": "internal",
-      "projectRoot": "apps/mobile",
       "android": {
         "buildType": "apk"
       },
@@ -17,13 +16,11 @@
     },
     "preview": {
       "distribution": "internal",
-      "projectRoot": "apps/mobile",
       "android": {
         "buildType": "apk"
       }
     },
     "production": {
-      "projectRoot": "apps/mobile",
       "autoIncrement": true
     }
   },
