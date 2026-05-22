@@ -109,7 +109,7 @@ function BentoCard({
 
         {/* Product Info */}
         <View style={styles.cardContent}>
-          <Text style={[styles.productName, isHero && { fontSize: 18 }]} numberOfLines={isHero ? 1 : 2}>
+          <Text style={[styles.productName, isHero && { fontSize: 20 }]} numberOfLines={isHero ? 1 : 2}>
             {product.name}
           </Text>
           <Text style={[styles.productDescription, isHero && { fontSize: 13 }]} numberOfLines={2}>
@@ -117,8 +117,8 @@ function BentoCard({
           </Text>
 
           <View style={styles.cardFooter}>
-            <Text style={[styles.productPrice, isHero && { fontSize: 18 }]}>
-              ₹{(product.price * 83).toFixed(0)}
+            <Text style={[styles.productPrice, isHero && { fontSize: 20 }]}>
+              ₹{product.price.toFixed(2)}
             </Text>
             <TouchableOpacity
               onPress={handleAddToCart}
@@ -175,8 +175,7 @@ const FALLBACK_PRODUCTS = [
     id: 'sourdough-focaccia',
     name: 'Sourdough Focaccia',
     price: 180.00,
-    category: 'Croissants',
-    image_url: 'https://images.unsplash.com/photo-1596450514735-111a2fe02935?auto=format&fit=crop&q=80&w=800',
+    image_url: 'https://upload.wikimedia.org/wikipedia/commons/4/43/Focaccia_al_rosmarino_01.jpg',
     description: 'Naturally fermented sheet-baked focaccia infused with organic extra virgin olive oil, fresh hand-picked rosemary, and coarse sea salt crystals.',
     is_available: true,
     stock: 8,
@@ -265,6 +264,18 @@ export default function CatalogScreen() {
           />
         }
       >
+        {/* Japanese Shokupan Section */}
+        <View style={styles.shokupanSection}>
+          <Text style={styles.shokupanEyebrow}>Signature Baking Art</Text>
+          <Text style={styles.shokupanTitle}>Pillowy Soft Japanese Milk Bread</Text>
+          <Text style={styles.shokupanDesc}>
+            Our legendary Japanese Shokupan milk bread is baked fresh at 4 AM every morning. Made with organic cream, sweet honey, and imported Japanese wheat.
+          </Text>
+          <View style={styles.shokupanBadge}>
+            <Feather name="star" size={14} color="#D98324" />
+            <Text style={styles.shokupanBadgeText}>Available Daily</Text>
+          </View>
+        </View>
         {products.length === 0 ? (
           <View style={styles.emptyState}>
             <Text style={styles.emptyEmoji}>🥖</Text>
@@ -354,8 +365,59 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingHorizontal: PADDING,
-    paddingTop: 8,
+    paddingTop: 0,
     paddingBottom: 100,
+  },
+  shokupanSection: {
+    backgroundColor: 'rgba(217, 131, 36, 0.05)',
+    borderRadius: 24,
+    padding: 24,
+    alignItems: 'center',
+    marginBottom: 24,
+    borderWidth: 1,
+    borderColor: 'rgba(217, 131, 36, 0.2)',
+  },
+  shokupanEyebrow: {
+    fontFamily: 'Inter-SemiBold',
+    fontSize: 10,
+    letterSpacing: 2,
+    textTransform: 'uppercase',
+    color: '#D98324',
+    marginBottom: 8,
+  },
+  shokupanTitle: {
+    fontFamily: 'PlayfairDisplay-Bold',
+    fontSize: 24,
+    color: '#1C160E',
+    textAlign: 'center',
+    lineHeight: 32,
+    marginBottom: 12,
+  },
+  shokupanDesc: {
+    fontFamily: 'Inter-Regular',
+    fontSize: 12,
+    color: 'rgba(28, 22, 14, 0.7)',
+    textAlign: 'center',
+    lineHeight: 20,
+    marginBottom: 16,
+  },
+  shokupanBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    gap: 6,
+    shadowColor: '#1C160E',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+  },
+  shokupanBadgeText: {
+    fontFamily: 'Inter-SemiBold',
+    fontSize: 11,
+    color: '#1C160E',
   },
   bentoContainer: {
     gap: 16,
