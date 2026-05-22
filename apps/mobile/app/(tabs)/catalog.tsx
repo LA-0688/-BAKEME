@@ -24,13 +24,6 @@ import { useCartStore, CartProduct } from '../../store/cartStore';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons';
 
-const LOCAL_IMAGES: Record<string, any> = {
-  '/sourdough_country_loaf.png': require('../../assets/images/sourdough_country_loaf.png'),
-  '/sprouted_ragi_sourdough.png': require('../../assets/images/sprouted_ragi_sourdough.png'),
-  '/millet_gf_sourdough.png': require('../../assets/images/millet_gf_sourdough.png'),
-  '/sourdough_focaccia.png': require('../../assets/images/sourdough_focaccia.png'),
-};
-
 const { width: SCREEN_W } = Dimensions.get('window');
 const PADDING = 16;
 const CONTENT_WIDTH = SCREEN_W - PADDING * 2;
@@ -101,7 +94,7 @@ function BentoCard({
         {/* Product Image */}
         <View style={imageContainerStyle}>
           <Image
-            source={LOCAL_IMAGES[product.image_url] ? LOCAL_IMAGES[product.image_url] : { uri: product.image_url }}
+            source={{ uri: product.image_url }}
             style={styles.productImage}
             resizeMode="cover"
           />
@@ -153,7 +146,7 @@ const FALLBACK_PRODUCTS = [
     name: 'Sourdough Country Loaf',
     price: 290.00,
     category: 'Sourdough',
-    image_url: '/sourdough_country_loaf.png',
+    image_url: 'https://images.unsplash.com/photo-1585478259715-876acc5be8eb?auto=format&fit=crop&q=80&w=800',
     description: '36-hour slow-fermented heirloom wheat, bold caramelized crust, airy open crumb, and robust wild levain tang.',
     is_available: true,
     stock: 12,
@@ -163,7 +156,7 @@ const FALLBACK_PRODUCTS = [
     name: 'Sprouted Ragi Sourdough',
     price: 240.00,
     category: 'Sourdough',
-    image_url: '/sprouted_ragi_sourdough.png',
+    image_url: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&q=80&w=800',
     description: 'Deeply nutritious sprouted finger millet (Ragi) sourdough, dense mineral-rich crumb, earthy rustic aroma, and complex whole-grain notes.',
     is_available: true,
     stock: 15,
@@ -173,7 +166,7 @@ const FALLBACK_PRODUCTS = [
     name: 'Multi Millet Gluten Free Sourdough',
     price: 260.00,
     category: 'Sourdough',
-    image_url: '/millet_gf_sourdough.png',
+    image_url: 'https://images.unsplash.com/photo-1549931319-a545dcf3bc73?auto=format&fit=crop&q=80&w=800',
     description: 'Crafted with ancient superfood millets: sorghum, pearl millet, and amaranth. Fully gluten-free with a delicate moist interior and toasted gold crust.',
     is_available: true,
     stock: 10,
@@ -183,7 +176,7 @@ const FALLBACK_PRODUCTS = [
     name: 'Sourdough Focaccia',
     price: 180.00,
     category: 'Croissants',
-    image_url: '/sourdough_focaccia.png',
+    image_url: 'https://images.unsplash.com/photo-1596450514735-111a2fe02935?auto=format&fit=crop&q=80&w=800',
     description: 'Naturally fermented sheet-baked focaccia infused with organic extra virgin olive oil, fresh hand-picked rosemary, and coarse sea salt crystals.',
     is_available: true,
     stock: 8,
