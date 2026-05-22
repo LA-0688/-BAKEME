@@ -70,9 +70,9 @@ function BentoCard({
   
   const containerStyle = [
     styles.cardContainer,
-    isHero && { width: CONTENT_WIDTH, height: 320 },
-    isPortrait && { flex: 1, height: 260 },
-    layoutType === 'standard' && { width: (CONTENT_WIDTH - 16) / 2, height: 260 },
+    isHero && { width: CONTENT_WIDTH, height: 340 },
+    isPortrait && { flex: 1, height: 300 },
+    layoutType === 'standard' && { width: (CONTENT_WIDTH - 16) / 2, height: 300 },
   ];
 
   const imageContainerStyle = [
@@ -94,7 +94,7 @@ function BentoCard({
         {/* Product Image */}
         <View style={imageContainerStyle}>
           <Image
-            source={{ uri: product.image_url }}
+            source={typeof product.image_url === 'string' ? { uri: product.image_url } : product.image_url}
             style={styles.productImage}
             resizeMode="cover"
           />
@@ -146,7 +146,7 @@ const FALLBACK_PRODUCTS = [
     name: 'Sourdough Country Loaf',
     price: 290.00,
     category: 'Sourdough',
-    image_url: 'https://images.unsplash.com/photo-1585478259715-876acc5be8eb?auto=format&fit=crop&q=80&w=800',
+    image_url: require('../../assets/images/sourdough_country_loaf.jpg'),
     description: '36-hour slow-fermented heirloom wheat, bold caramelized crust, airy open crumb, and robust wild levain tang.',
     is_available: true,
     stock: 12,
@@ -156,7 +156,7 @@ const FALLBACK_PRODUCTS = [
     name: 'Sprouted Ragi Sourdough',
     price: 240.00,
     category: 'Sourdough',
-    image_url: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&q=80&w=800',
+    image_url: require('../../assets/images/sprouted_ragi_sourdough.jpg'),
     description: 'Deeply nutritious sprouted finger millet (Ragi) sourdough, dense mineral-rich crumb, earthy rustic aroma, and complex whole-grain notes.',
     is_available: true,
     stock: 15,
@@ -166,7 +166,7 @@ const FALLBACK_PRODUCTS = [
     name: 'Multi Millet Gluten Free Sourdough',
     price: 260.00,
     category: 'Sourdough',
-    image_url: 'https://images.unsplash.com/photo-1549931319-a545dcf3bc73?auto=format&fit=crop&q=80&w=800',
+    image_url: require('../../assets/images/millet_gf_sourdough.jpg'),
     description: 'Crafted with ancient superfood millets: sorghum, pearl millet, and amaranth. Fully gluten-free with a delicate moist interior and toasted gold crust.',
     is_available: true,
     stock: 10,
@@ -175,7 +175,8 @@ const FALLBACK_PRODUCTS = [
     id: 'sourdough-focaccia',
     name: 'Sourdough Focaccia',
     price: 180.00,
-    image_url: 'https://upload.wikimedia.org/wikipedia/commons/4/43/Focaccia_al_rosmarino_01.jpg',
+    category: 'Croissants',
+    image_url: require('../../assets/images/sourdough_focaccia.jpg'),
     description: 'Naturally fermented sheet-baked focaccia infused with organic extra virgin olive oil, fresh hand-picked rosemary, and coarse sea salt crystals.',
     is_available: true,
     stock: 8,
@@ -266,6 +267,7 @@ export default function CatalogScreen() {
       >
         {/* Japanese Shokupan Section */}
         <View style={styles.shokupanSection}>
+          <Image source={require('../../assets/images/shokupan.jpg')} style={styles.shokupanImage} />
           <Text style={styles.shokupanEyebrow}>Signature Baking Art</Text>
           <Text style={styles.shokupanTitle}>Pillowy Soft Japanese Milk Bread</Text>
           <Text style={styles.shokupanDesc}>
@@ -376,6 +378,13 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     borderWidth: 1,
     borderColor: 'rgba(217, 131, 36, 0.2)',
+    overflow: 'hidden',
+  },
+  shokupanImage: {
+    width: '100%',
+    height: 180,
+    borderRadius: 16,
+    marginBottom: 16,
   },
   shokupanEyebrow: {
     fontFamily: 'Inter-SemiBold',

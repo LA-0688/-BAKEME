@@ -77,7 +77,7 @@ export default function CartScreen() {
             style={styles.cartRow}
           >
             <Image
-              source={{ uri: item.product.image_url }}
+              source={typeof item.product.image_url === 'string' ? { uri: item.product.image_url } : item.product.image_url}
               style={styles.itemImage}
               resizeMode="cover"
             />
@@ -90,7 +90,7 @@ export default function CartScreen() {
             </View>
             <View style={styles.itemRight}>
               <Text style={styles.itemPrice}>
-                ₹{(item.product.price * item.quantity * 83).toFixed(0)}
+                ₹{(item.product.price * item.quantity).toFixed(2)}
               </Text>
               <TouchableOpacity
                 onPress={() => handleRemove(item.product.id)}
@@ -108,7 +108,7 @@ export default function CartScreen() {
       <View style={styles.footer}>
         <View style={styles.totalRow}>
           <Text style={styles.totalLabel}>Subtotal</Text>
-          <Text style={styles.totalAmount}>₹{(subtotal * 83).toFixed(0)}</Text>
+          <Text style={styles.totalAmount}>₹{subtotal.toFixed(2)}</Text>
         </View>
         <Text style={styles.footerNote}>
           Taxes calculated at checkout · Synced across your devices
