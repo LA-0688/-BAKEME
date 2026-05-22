@@ -24,6 +24,13 @@ import { useCartStore, CartProduct } from '../../store/cartStore';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons';
 
+const LOCAL_IMAGES: Record<string, any> = {
+  '/sourdough_country_loaf.png': require('../../assets/images/sourdough_country_loaf.png'),
+  '/sprouted_ragi_sourdough.png': require('../../assets/images/sprouted_ragi_sourdough.png'),
+  '/millet_gf_sourdough.png': require('../../assets/images/millet_gf_sourdough.png'),
+  '/sourdough_focaccia.png': require('../../assets/images/sourdough_focaccia.png'),
+};
+
 const { width: SCREEN_W } = Dimensions.get('window');
 const PADDING = 16;
 const CONTENT_WIDTH = SCREEN_W - PADDING * 2;
@@ -94,7 +101,7 @@ function BentoCard({
         {/* Product Image */}
         <View style={imageContainerStyle}>
           <Image
-            source={{ uri: product.image_url }}
+            source={LOCAL_IMAGES[product.image_url] ? LOCAL_IMAGES[product.image_url] : { uri: product.image_url }}
             style={styles.productImage}
             resizeMode="cover"
           />
@@ -139,6 +146,50 @@ function BentoCard({
 // ---------------------------------------------------------------
 // CatalogScreen: Renders products in a highly styled Bento Grid
 // ---------------------------------------------------------------
+
+const FALLBACK_PRODUCTS = [
+  {
+    id: 'sourdough-country-loaf',
+    name: 'Sourdough Country Loaf',
+    price: 290.00,
+    category: 'Sourdough',
+    image_url: '/sourdough_country_loaf.png',
+    description: '36-hour slow-fermented heirloom wheat, bold caramelized crust, airy open crumb, and robust wild levain tang.',
+    is_available: true,
+    stock: 12,
+  },
+  {
+    id: 'sprouted-ragi-sourdough',
+    name: 'Sprouted Ragi Sourdough',
+    price: 240.00,
+    category: 'Sourdough',
+    image_url: '/sprouted_ragi_sourdough.png',
+    description: 'Deeply nutritious sprouted finger millet (Ragi) sourdough, dense mineral-rich crumb, earthy rustic aroma, and complex whole-grain notes.',
+    is_available: true,
+    stock: 15,
+  },
+  {
+    id: 'multi-millet-gf-sourdough',
+    name: 'Multi Millet Gluten Free Sourdough',
+    price: 260.00,
+    category: 'Sourdough',
+    image_url: '/millet_gf_sourdough.png',
+    description: 'Crafted with ancient superfood millets: sorghum, pearl millet, and amaranth. Fully gluten-free with a delicate moist interior and toasted gold crust.',
+    is_available: true,
+    stock: 10,
+  },
+  {
+    id: 'sourdough-focaccia',
+    name: 'Sourdough Focaccia',
+    price: 180.00,
+    category: 'Croissants',
+    image_url: '/sourdough_focaccia.png',
+    description: 'Naturally fermented sheet-baked focaccia infused with organic extra virgin olive oil, fresh hand-picked rosemary, and coarse sea salt crystals.',
+    is_available: true,
+    stock: 8,
+  },
+];
+
 export default function CatalogScreen() {
   const [products, setProducts] = useState<CartProduct[]>([]);
   const [loading, setLoading] = useState(true);
@@ -153,9 +204,30 @@ export default function CatalogScreen() {
 
     if (error) {
       console.error('[CatalogScreen] fetch error:', error.message);
-    } else {
-      setProducts(data as CartProduct[]);
     }
+
+    const dbProducts = (data || []).filter((p) => {
+      const isCroissantCategory = p.category === 'Croissants';
+      const isActualCroissant = isCroissantCategory && !p.name.toLowerCase().includes('focaccia');
+      const hasCroissantInName = p.name.toLowerCase().includes('croissant');
+      const isDuplicateCountrySourdough = p.name.toLowerCase().includes('country sourdough') || p.name.toLowerCase().includes('sourdough country');
+      const isUSDTemplateProduct = p.price < 50;
+
+      return !isActualCroissant && !hasCroissantInName && !isDuplicateCountrySourdough && !isUSDTemplateProduct;
+    });
+
+    const merged = [...FALLBACK_PRODUCTS];
+
+    dbProducts.forEach((dbProd) => {
+      const exists = FALLBACK_PRODUCTS.some(
+        (sig) => sig.name.toLowerCase() === dbProd.name.toLowerCase()
+      );
+      if (!exists) {
+        merged.push(dbProd);
+      }
+    });
+
+    setProducts(merged as CartProduct[]);
     setLoading(false);
     setRefreshing(false);
   }, []);
