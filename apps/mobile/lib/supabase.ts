@@ -49,15 +49,8 @@ const createStorageAdapter = () => {
 
 const ExpoSecureStoreAdapter = createStorageAdapter();
 
-const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL!;
-const SUPABASE_ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!;
-
-if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-  console.warn(
-    '[Supabase] Missing EXPO_PUBLIC_SUPABASE_URL or EXPO_PUBLIC_SUPABASE_ANON_KEY. ' +
-    'Create a .env file in apps/mobile/ with your project credentials.'
-  );
-}
+const SUPABASE_URL = 'https://kimmnbpopbmutkowdssa.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpbW1uYnBvcGJtdXRrb3dkc3NhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNzk4MDksImV4cCI6MjA5NDk1NTgwOX0.XolJ6XOreTWZpGeMw0DmNEjPltlIUw1BQnnzf6Gi_z8';
 
 export const supabase = createClient(SUPABASE_URL ?? '', SUPABASE_ANON_KEY ?? '', {
   auth: {

@@ -2,7 +2,6 @@ import React, { useEffect, useState, useCallback } from 'react';
 import {
   View,
   Text,
-  FlatList,
   Image,
   TouchableOpacity,
   StyleSheet,
@@ -11,7 +10,7 @@ import {
   Pressable,
   Dimensions,
   ActivityIndicator,
-  Platform,
+  ScrollView,
 } from 'react-native';
 import Animated, {
   FadeInDown,
@@ -26,19 +25,24 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons';
 
 const { width: SCREEN_W } = Dimensions.get('window');
+const PADDING = 16;
+const CONTENT_WIDTH = SCREEN_W - PADDING * 2;
 
 // ---------------------------------------------------------------
-// ProductCard: native-optimized card with press-scale animation
-// and haptic feedback — replaces web's heavy hover animations.
+// BentoCard: Adaptive card that changes dimensions based on layout
 // ---------------------------------------------------------------
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-function ProductCard({
+type LayoutType = 'hero' | 'portrait' | 'standard';
+
+function BentoCard({
   product,
   index,
+  layoutType,
 }: {
   product: CartProduct;
   index: number;
+  layoutType: LayoutType;
 }) {
   const { addItem } = useCartStore();
   const scale = useSharedValue(1);
@@ -60,10 +64,27 @@ function ProductCard({
     await addItem(product);
   };
 
+  // Determine styles based on layoutType
+  const isHero = layoutType === 'hero';
+  const isPortrait = layoutType === 'portrait';
+  
+  const containerStyle = [
+    styles.cardContainer,
+    isHero && { width: CONTENT_WIDTH, height: 320 },
+    isPortrait && { flex: 1, height: 260 },
+    layoutType === 'standard' && { width: (CONTENT_WIDTH - 16) / 2, height: 260 },
+  ];
+
+  const imageContainerStyle = [
+    styles.imageContainer,
+    isHero && { height: 180 },
+    (isPortrait || layoutType === 'standard') && { height: 130 },
+  ];
+
   return (
     <Animated.View
       entering={FadeInDown.delay(index * 80).duration(500).springify()}
-      style={[styles.cardContainer, animatedStyle]}
+      style={[containerStyle, animatedStyle]}
     >
       <AnimatedPressable
         onPressIn={handlePressIn}
@@ -71,7 +92,7 @@ function ProductCard({
         style={styles.card}
       >
         {/* Product Image */}
-        <View style={styles.imageContainer}>
+        <View style={imageContainerStyle}>
           <Image
             source={{ uri: product.image_url }}
             style={styles.productImage}
@@ -88,24 +109,25 @@ function ProductCard({
 
         {/* Product Info */}
         <View style={styles.cardContent}>
-          <Text style={styles.productName} numberOfLines={2}>
+          <Text style={[styles.productName, isHero && { fontSize: 18 }]} numberOfLines={isHero ? 1 : 2}>
             {product.name}
           </Text>
-          <Text style={styles.productDescription} numberOfLines={2}>
+          <Text style={[styles.productDescription, isHero && { fontSize: 13 }]} numberOfLines={2}>
             {product.description}
           </Text>
 
           <View style={styles.cardFooter}>
-            <Text style={styles.productPrice}>
+            <Text style={[styles.productPrice, isHero && { fontSize: 18 }]}>
               ₹{(product.price * 83).toFixed(0)}
             </Text>
             <TouchableOpacity
               onPress={handleAddToCart}
-              style={styles.addButton}
+              style={[styles.addButton, isHero && { paddingHorizontal: 16, paddingVertical: 10 }]}
               activeOpacity={0.8}
             >
-              <Feather name="plus" size={14} color="#FFF" />
-              <Text style={styles.addButtonText}>Add</Text>
+              <Feather name="plus" size={isHero ? 16 : 14} color="#FFF" />
+              {isHero && <Text style={[styles.addButtonText, { fontSize: 12 }]}>Add to Cart</Text>}
+              {!isHero && <Text style={styles.addButtonText}>Add</Text>}
             </TouchableOpacity>
           </View>
         </View>
@@ -115,8 +137,7 @@ function ProductCard({
 }
 
 // ---------------------------------------------------------------
-// CatalogScreen: Fetches products from Supabase and renders them
-// in a 2-column native grid with pull-to-refresh.
+// CatalogScreen: Renders products in a highly styled Bento Grid
 // ---------------------------------------------------------------
 export default function CatalogScreen() {
   const [products, setProducts] = useState<CartProduct[]>([]);
@@ -160,16 +181,14 @@ export default function CatalogScreen() {
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerEyebrow}>Fresh from the oven</Text>
+        <Text style={styles.headerEyebrow}>Freshly Baked Daily</Text>
         <Text style={styles.headerTitle}>The Daily Counter</Text>
+        <Text style={styles.headerSubtitle}>
+          Explore our curated small-batch breads, hand-rolled pastries, and classic beverages.
+        </Text>
       </View>
 
-      {/* Product Grid */}
-      <FlatList
-        data={products}
-        keyExtractor={(item) => item.id}
-        numColumns={2}
-        columnWrapperStyle={styles.columnWrapper}
+      <ScrollView
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
         refreshControl={
@@ -180,18 +199,53 @@ export default function CatalogScreen() {
             colors={['#D98324']}
           />
         }
-        renderItem={({ item, index }) => (
-          <ProductCard product={item} index={index} />
-        )}
-        ListEmptyComponent={
+      >
+        {products.length === 0 ? (
           <View style={styles.emptyState}>
             <Text style={styles.emptyEmoji}>🥖</Text>
             <Text style={styles.emptyText}>
               All loaves have sold out today. Pull to refresh!
             </Text>
           </View>
-        }
-      />
+        ) : (
+          <View style={styles.bentoContainer}>
+            {/* 1. Hero Landscape */}
+            {products[0] && (
+              <BentoCard product={products[0]} index={0} layoutType="hero" />
+            )}
+
+            {/* 2. Portrait Side-by-Side */}
+            {(products[1] || products[2]) && (
+              <View style={styles.bentoRow}>
+                {products[1] && <BentoCard product={products[1]} index={1} layoutType="portrait" />}
+                {products[2] && <BentoCard product={products[2]} index={2} layoutType="portrait" />}
+              </View>
+            )}
+
+            {/* 3. Secondary Hero Landscape */}
+            {products[3] && (
+              <BentoCard product={products[3]} index={3} layoutType="hero" />
+            )}
+
+            {/* 4. More Specials Divider */}
+            {products.length > 4 && (
+              <View style={styles.dividerContainer}>
+                <Text style={styles.headerEyebrow}>Specialty Collections</Text>
+                <Text style={styles.headerTitle}>More Specials</Text>
+              </View>
+            )}
+
+            {/* 5. Standard Grid for remaining */}
+            {products.length > 4 && (
+              <View style={styles.standardGrid}>
+                {products.slice(4).map((item, idx) => (
+                  <BentoCard key={item.id} product={item} index={idx + 4} layoutType="standard" />
+                ))}
+              </View>
+            )}
+          </View>
+        )}
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -208,7 +262,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FCFBF7',
   },
   header: {
-    paddingHorizontal: 20,
+    paddingHorizontal: PADDING,
     paddingTop: 16,
     paddingBottom: 20,
     backgroundColor: 'transparent',
@@ -226,20 +280,43 @@ const styles = StyleSheet.create({
     fontSize: 34,
     color: '#1C160E',  // bakery-charcoal
   },
+  headerSubtitle: {
+    fontFamily: 'Inter-Regular',
+    fontSize: 12,
+    color: '#1C160E80',
+    marginTop: 8,
+    lineHeight: 18,
+  },
   listContent: {
-    paddingHorizontal: 16,
+    paddingHorizontal: PADDING,
     paddingTop: 8,
     paddingBottom: 100,
   },
-  columnWrapper: {
+  bentoContainer: {
     gap: 16,
-    marginBottom: 16,
+    flexDirection: 'column',
+  },
+  bentoRow: {
+    flexDirection: 'row',
+    gap: 16,
+  },
+  standardGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 16,
+  },
+  dividerContainer: {
+    marginTop: 24,
+    marginBottom: 8,
+    paddingTop: 24,
+    borderTopWidth: 1,
+    borderColor: 'rgba(245, 236, 225, 1)',
   },
   cardContainer: {
-    flex: 1,
-    maxWidth: (SCREEN_W - 48) / 2,
+    // Width and Height are dynamically set based on layoutType
   },
   card: {
+    flex: 1,
     backgroundColor: '#FFFFFF',
     borderRadius: 24,
     overflow: 'hidden',
@@ -253,7 +330,7 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     position: 'relative',
-    height: 150,
+    width: '100%',
   },
   productImage: {
     width: '100%',
@@ -270,10 +347,14 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 10,
     left: 10,
-    backgroundColor: 'rgba(252, 251, 247, 0.9)',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
+    backgroundColor: 'rgba(252, 251, 247, 0.95)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
     borderRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
   categoryText: {
     fontFamily: 'Inter-SemiBold',
@@ -284,20 +365,21 @@ const styles = StyleSheet.create({
   },
   cardContent: {
     padding: 14,
-    gap: 4,
+    flex: 1,
+    justifyContent: 'space-between',
   },
   productName: {
     fontFamily: 'PlayfairDisplay-Bold',
     fontSize: 15,
     color: '#1C160E',
-    lineHeight: 20,
+    lineHeight: 22,
+    marginBottom: 4,
   },
   productDescription: {
     fontFamily: 'Inter-Regular',
     fontSize: 11,
     color: '#1C160E80',
     lineHeight: 16,
-    marginTop: 2,
   },
   cardFooter: {
     flexDirection: 'row',
