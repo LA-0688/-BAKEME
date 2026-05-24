@@ -142,7 +142,7 @@ export default function CartDrawer({ isOpen, onClose, cart, onRemove, onCheckout
                   <span className="font-serif text-2xl font-bold text-bakery-charcoal">₹{subtotal.toFixed(2)}</span>
                 </div>
                 <p className="text-[10px] text-bakery-charcoal/50 leading-relaxed mb-6 font-light">
-                  Tax and pickup options computed at final checkout stage. State synched instantly via Supabase triggers.
+                  Tax and pickup options computed at final checkout stage. State synched instantly across all devices.
                 </p>
                 <motion.button 
                   whileHover={{ scale: 1.02 }}

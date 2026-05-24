@@ -33,7 +33,7 @@ export default function SyncDemo({ cart }: SyncDemoProps) {
             viewport={{ once: true }}
             className="text-bakery-gold uppercase tracking-widest text-xs font-bold"
           >
-            Real-time Supabase State
+            Real-time Cloud Sync
           </motion.span>
           <motion.h2 
             initial={{ opacity: 0, y: 15 }}
@@ -52,7 +52,7 @@ export default function SyncDemo({ cart }: SyncDemoProps) {
             transition={{ delay: 0.2 }}
             className="text-bakery-cream/70 font-light leading-relaxed text-sm"
           >
-            We leverage Supabase's live database triggers. When you add standard products or modify checkout orders here on the web browser, your basket instantly reflects on our **Expo Native Mobile App**. Start browsing on your desktop, checkout seamlessly on your phone.
+            We leverage live cloud infrastructure. When you add standard products or modify checkout orders here on the web browser, your basket instantly reflects on our **Native Mobile App**. Start browsing on your desktop, checkout seamlessly on your phone.
           </motion.p>
           
           <motion.div 
