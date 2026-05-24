@@ -36,57 +36,78 @@ export default function HomePage() {
 
   const fetchProducts = async () => {
     setProductsLoading(true);
-    const { data, error } = await supabase
-      .from('products')
-      .select('*')
-      .eq('is_available', true)
-      .order('created_at', { ascending: false });
+    try {
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .eq('is_available', true)
+        .order('created_at', { ascending: false });
 
-    // Filter out actual croissants, duplicate sourdoughs, and USD-priced template products
-    const dbProducts = (data || []).filter((p) => {
-      const isCroissantCategory = p.category === 'Croissants';
-      const isActualCroissant = isCroissantCategory && !p.name.toLowerCase().includes('focaccia');
-      const hasCroissantInName = p.name.toLowerCase().includes('croissant');
-      
-      // Exclude duplicate country sourdough items to keep catalog clean
-      const isDuplicateCountrySourdough = p.name.toLowerCase().includes('country sourdough') || p.name.toLowerCase().includes('sourdough country');
-      
-      // Exclude low-priced USD template bakes (under ₹50.00)
-      const isUSDTemplateProduct = p.price < 50;
-
-      return !isActualCroissant && !hasCroissantInName && !isDuplicateCountrySourdough && !isUSDTemplateProduct;
-    });
-
-    // Merge FALLBACK_PRODUCTS with database products, ensuring signature ones are at the front
-    const merged = [...FALLBACK_PRODUCTS];
-
-    // Append database products that are not already in FALLBACK_PRODUCTS
-    dbProducts.forEach((dbProd) => {
-      const exists = FALLBACK_PRODUCTS.some(
-        (sig) => sig.name.toLowerCase() === dbProd.name.toLowerCase()
-      );
-      if (!exists) {
-        merged.push(dbProd);
+      if (error) {
+        console.error('Error fetching products:', error);
       }
-    });
 
-    setProducts(merged as unknown as Product[]);
-    setProductsLoading(false);
+      // Filter out actual croissants, duplicate sourdoughs, and USD-priced template products
+      const dbProducts = (data || []).filter((p) => {
+        const isCroissantCategory = p.category === 'Croissants';
+        const isActualCroissant = isCroissantCategory && !p.name.toLowerCase().includes('focaccia');
+        const hasCroissantInName = p.name.toLowerCase().includes('croissant');
+        
+        // Exclude duplicate country sourdough items to keep catalog clean
+        const isDuplicateCountrySourdough = p.name.toLowerCase().includes('country sourdough') || p.name.toLowerCase().includes('sourdough country');
+        
+        // Exclude low-priced USD template bakes (under ₹50.00)
+        const isUSDTemplateProduct = p.price < 50;
+
+        return !isActualCroissant && !hasCroissantInName && !isDuplicateCountrySourdough && !isUSDTemplateProduct;
+      });
+
+      // Merge FALLBACK_PRODUCTS with database products, ensuring signature ones are at the front
+      const merged = [...FALLBACK_PRODUCTS];
+
+      // Append database products that are not already in FALLBACK_PRODUCTS
+      dbProducts.forEach((dbProd) => {
+        const exists = FALLBACK_PRODUCTS.some(
+          (sig) => sig.name.toLowerCase() === dbProd.name.toLowerCase()
+        );
+        if (!exists) {
+          merged.push(dbProd);
+        }
+      });
+
+      setProducts(merged as unknown as Product[]);
+    } catch (err) {
+      console.warn('Supabase fetch failed, falling back to signature local catalog:', err);
+      setProducts(FALLBACK_PRODUCTS as unknown as Product[]);
+    } finally {
+      setProductsLoading(false);
+    }
   };
 
   useEffect(() => {
     fetchProducts();
 
-    // Setup live subscription to the products table for customer instant updates
-    const productsSubscription = supabase
-      .channel('realtime_storefront_products')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, () => {
-        fetchProducts();
-      })
-      .subscribe();
+    let productsSubscription: any = null;
+    try {
+      // Setup live subscription to the products table for customer instant updates
+      productsSubscription = supabase
+        .channel('realtime_storefront_products')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, () => {
+          fetchProducts();
+        })
+        .subscribe();
+    } catch (err) {
+      console.warn('Realtime subscription failed:', err);
+    }
 
     return () => {
-      supabase.removeChannel(productsSubscription);
+      if (productsSubscription) {
+        try {
+          supabase.removeChannel(productsSubscription);
+        } catch (err) {
+          console.warn('Remove realtime subscription failed:', err);
+        }
+      }
     };
   }, []);
 
